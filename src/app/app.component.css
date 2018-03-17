@@ -1,7 +1,17 @@
+.mat-toolbar {
+    margin: 0;
+    padding: 0;
+}
+
 .example-icon {
     padding: 0 14px;
 }
 
 .example-spacer {
     flex: 1 1 auto;
+}
+
+.avatar {
+    border-radius: 100%;
+    margin: 5px;
 }

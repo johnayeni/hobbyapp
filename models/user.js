@@ -13,7 +13,8 @@ var UserSchema = new Schema({
         required: true
     },
     phoneNumber: {
-        type: Number,
+        type: String,
+        unique: true,
         required: true
     },
     password: {
