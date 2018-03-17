@@ -1,3 +1,32 @@
-<p>
-  register works!
-</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="ui header orange">Welcome to Hobby Square
+                <div class="sub header">Create an account to manage your hobbies</div>
+            </h1>
+            <br>
+            <i class="fa fa-qrcode fa-10x"></i>
+            <br><br>
+        </div>
+        <div class="col-md-6">
+            <h2 class="ui header orange">Register</h2>
+            <form class="ui form">
+                <div class="field">
+                    <sm-input type="text" label="Full Name" placeholder="Enter fullname..."></sm-input>
+                </div>
+                <div class="field">
+                    <sm-input type="text" label="Email" placeholder="Enter email..."></sm-input>
+                </div>
+                <div class="field">
+                    <sm-input type="number" label="Phone number" placeholder="Enter phone number..."></sm-input>
+                </div>
+                <div class="field">
+                    <sm-input type="password" label="Password" placeholder="Enter password..."></sm-input>
+                </div>
+                <sm-button class="violet">Register</sm-button>
+            </form>
+            <br>
+            <p>Already have an account ? <a routerLink="/login">Login</a></p>
+        </div>
+    </div>
+</div>

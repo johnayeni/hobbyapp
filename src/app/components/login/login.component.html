@@ -1,3 +1,26 @@
-<p>
-  login works!
-</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="ui header orange">Welcome to Hobby Square
+                <div class="sub header">Log in to account to manage your hobbies</div>
+            </h1>
+            <br>
+            <i class="fa fa-qrcode fa-10x"></i>
+            <br><br>
+        </div>
+        <div class="col-md-6">
+            <h2 class="ui header orange">Login</h2>
+            <form class="ui form">
+                <div class="field">
+                    <sm-input type="text" label="Email" placeholder="Enter email..."></sm-input>
+                </div>
+                <div class="field">
+                    <sm-input type="password" label="Password" placeholder="Enter password..."></sm-input>
+                </div>
+                <sm-button class="violet">Login</sm-button>
+            </form>
+            <br>
+            <p>Dont have an acoount ? <a routerLink="/register">Register</a></p>
+        </div>
+    </div>
+</div>

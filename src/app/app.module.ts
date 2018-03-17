@@ -1,11 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MyOwnCustomMaterialModuleModule} from './modules/my-own-custom-material-module/my-own-custom-material-module.module';
-
+import { NgSemanticModule } from 'ng-semantic';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -23,9 +23,10 @@ import { HomeComponent } from './components/home/home.component';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MyOwnCustomMaterialModuleModule,
+    NgSemanticModule,
     HttpClientModule
   ],
   providers: [],
