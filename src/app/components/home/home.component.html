@@ -1,15 +1,58 @@
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
         <div class="col-md-3">
-            <sm-menu title="John Ayeni" class="ui menu vertical">
-                <a sm-item>Hobbies</a>
-                <a sm-item>Favourite Hobbies</a>
-                <a sm-item>Add new Hobby</a>
-                <a sm-item>Profile</a>
-            </sm-menu>
+            <div class="ui blue button" (click)="dimmer.show({opacity: .7, transition: 'slide up'})">
+                Add new Hobby
+                <i class="right plus icon"></i>
+            </div>
         </div>
-        <div class="col-md-9">
-
+        <div class="col-md-6">
+            <div class="ui divided items">
+                <div class="item">
+                    <div class="content">
+                        <a class="header">Football</a>
+                        <div class="meta">
+                            <span class="cinema">Played with a ball</span>
+                        </div>
+                        <div class="description">
+                            <p></p>
+                        </div>
+                        <div class="extra">
+                            <div class="ui right floated violet button">
+                                Remove
+                                <i class="right chevron icon"></i>
+                            </div>
+                            <div class="ui red"><i class="fa fa-heart fa-2x"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <a class="header">Football</a>
+                        <div class="meta">
+                            <span class="cinema">Played with a ball</span>
+                        </div>
+                        <div class="description">
+                            <p></p>
+                        </div>
+                        <div class="extra">
+                            <div class="ui right floated violet button">
+                                Remove
+                                <i class="right chevron icon"></i>
+                            </div>
+                            <div><i class="fa fa-heart fa-2x"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<sm-dimmer #dimmer>
+    <div class="center">
+        <h2 class="ui inverted icon header">
+            Add new Hobby
+        </h2>
+    </div>
+</sm-dimmer>
