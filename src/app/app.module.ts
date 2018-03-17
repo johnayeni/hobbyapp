@@ -3,6 +3,10 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MyOwnCustomMaterialModuleModule} from './modules/my-own-custom-material-module/my-own-custom-material-module.module';
+
+
 import { AppComponent } from './app.component';
 
 
@@ -12,7 +16,9 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MyOwnCustomMaterialModuleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
