@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { NgSemanticModule } from 'ng-semantic';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -28,7 +27,6 @@ import { ProfileComponent } from './components/profile/profile.component';
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    NgSemanticModule,
     HttpClientModule
   ],
   providers: [],
