@@ -1,0 +1,31 @@
+<nav class="navbar is-danger">
+    <div class="navbar-brand">
+        <a class="navbar-item" routerLink="/">
+            HOBBY SQUARE
+        </a>
+        <div [class]="isActive? 'navbar-burger burger is-active':'navbar-burger burger'" data-target="navbarDropdown" (click)="toggleNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <div id="navbarDropdown" [class]="isActive? 'navbar-menu is-active':'navbar-menu'">
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <a class="has-text-white" routerLink="/home">
+                    <span class="icon is-small">
+                      <i class="fas fa-home"></i>
+                  </span> Home
+                </a>
+            </div>
+            <div class="navbar-item">
+                <a class="has-text-white" routerLink="/profile">
+                    <span class="icon is-small">
+                      <i class="fas fa-user"></i>
+                  </span> Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

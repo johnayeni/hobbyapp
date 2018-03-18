@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import './assets/css/bulma.css';
+#layoutContent {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+#layoutMain {
+    flex: 1;
+}
+
+.avatar {
+    border-radius: 100% !important;
+    margin: 5px;
+}
+
+@media screen and (max-width: 1023px) {
+    .navbar-menu {
+        background-color: #ff3860;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .hero.is-large .hero-body {
+        padding-top: 10rem;
+    }
+}
