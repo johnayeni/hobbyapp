@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./config/database');
+require('dotenv').config();
 
 const app = express();
 

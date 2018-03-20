@@ -9,17 +9,22 @@ var UserSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true,
+        unique: [true, "Email already taken"],
         required: true
     },
-    phoneNumber: {
+    phone_number: {
         type: String,
-        unique: true,
+        unique: [true, "Phone number already taken"],
         required: true
     },
     password: {
         type: String,
+        minlength: [6, "Password must have aleast 6 characters"],
         required: true
+    },
+    access_token: {
+        type: String,
+        default: null
     },
     created: {
         type: Date,

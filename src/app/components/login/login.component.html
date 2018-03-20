@@ -13,21 +13,23 @@
             </div>
             <div class="column is-6">
                 <h2 class="subtitle">Log in</h2>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="email" placeholder="Email">
+                <form (ngSubmit)="onSubmit()">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" type="email" [(ngModel)]="formData.email" name="Email" placeholder="Email">
+                        </div>
                     </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <input class="input" type="password" placeholder="Password">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" type="password" [(ngModel)]="formData.password" name="Password" placeholder="Password">
+                        </div>
                     </div>
-                </div>
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-danger">Log in</button>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-danger" type="submit">Log in</button>
+                        </div>
                     </div>
-                </div>
+                </form>
                 <p>Don't have an account ? <a class="has-text-danger" routerLink="/register">Register</a></p>
             </div>
         </div>

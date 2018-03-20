@@ -3,27 +3,34 @@
         <a class="navbar-item" routerLink="/">
             HOBBY SQUARE
         </a>
-        <div [class]="isActive? 'navbar-burger burger is-active':'navbar-burger burger'" data-target="navbarDropdown" (click)="toggleNav()">
+        <div [class]="isActive? 'navbar-burger burger is-active':'navbar-burger burger'" data-target="navbarDropdown" (click)="toggleNav()" *ngIf="authService.isLoggedIn()">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </div>
 
-    <div id="navbarDropdown" [class]="isActive? 'navbar-menu is-active':'navbar-menu'">
+    <div id="navbarDropdown" [class]="isActive? 'navbar-menu is-active':'navbar-menu'" *ngIf="authService.isLoggedIn()">
         <div class="navbar-end">
             <div class="navbar-item">
-                <a class="has-text-white" routerLink="/home">
-                    <span class="icon is-small">
-                      <i class="fas fa-home"></i>
+                <a class=" has-text-white " routerLink="/home" routerLinkActive="active">
+                    <span class="icon is-small ">
+                      <i class="fas fa-home "></i>
                   </span> Home
                 </a>
             </div>
-            <div class="navbar-item">
-                <a class="has-text-white" routerLink="/profile">
-                    <span class="icon is-small">
-                      <i class="fas fa-user"></i>
+            <div class="navbar-item ">
+                <a class="has-text-white " routerLink="/profile" routerLinkActive="active">
+                    <span class="icon is-small ">
+                      <i class="fas fa-user "></i>
                   </span> Profile
+                </a>
+            </div>
+            <div class="navbar-item ">
+                <a class="has-text-white" (click)="authService.logout()">
+                    <span class="icon is-small ">
+                    <i class="fas fa-power-off "></i>
+                </span> Log out
                 </a>
             </div>
         </div>
