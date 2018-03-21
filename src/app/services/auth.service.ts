@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse , HttpHeaders } from '@angular/common/htt
 
 import { User } from '../classes/user';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
+import { catchError } from 'rxjs/operators';
 import 'rxjs/add/observable/throw';
 
 import { Router } from '@angular/router';
@@ -16,13 +16,17 @@ export class AuthService {
 
   registerUser(formData: User): Observable<User> {
     return this.http.post<User>('http://localhost:3000/api/register', formData)
-            .catch(this.handleError);
-  }
+                    .pipe(
+                      catchError(this.handleError)
+                    );
+}
 
   loginUser(formData: User): Observable<User> {
     return this.http.post<User>('http://localhost:3000/api/login', formData)
-            .catch(this.handleError);
-  }
+                    .pipe(
+                      catchError(this.handleError)
+                    );
+}
 
   handleError(error: HttpErrorResponse) {
     return Observable.throw(error.message || 'server error');

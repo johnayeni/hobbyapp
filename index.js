@@ -3,8 +3,14 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const passport = require('passport');
+var cors = require('cors');
 const config = require('./config/database');
 require('dotenv').config();
+
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+}
 
 const app = express();
 
@@ -17,6 +23,8 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+app.options('*', cors());
 
 app.use(passport.initialize());
 

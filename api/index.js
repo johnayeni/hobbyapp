@@ -47,34 +47,38 @@ router.post('/register', function(req, res) {
 
 // login a user
 router.post('/login', function(req, res) {
-    User.findOne({
-        email: req.body.email
-    }, function(err, user) {
-        if (err) throw err;
+    if (!req.body.email || !req.body.password) {
+        res.json({ name: false, msg: 'email and password reqiured !' });
+    } else {
+        User.findOne({
+            email: req.body.email
+        }, function(err, user) {
+            if (err) throw err;
 
-        if (!user) {
-            res.json({ success: false, msg: 'Authentication failed. Invalid user.' });
-        } else {
-            // check if password matches
-            user.comparePassword(req.body.password, function(err, isMatch) {
-                if (isMatch && !err) {
-                    // if user is found and password is right create a token
-                    var token = jwt.sign(user.toObject(), config.secret);
-                    // return the information including token as JSON
-                    User.findOneAndUpdate({ email: user.email }, { access_token: `JWT ${token}` }, function(err, verifiedUser) {
-                        if (err) {
-                            res.json({ success: false, msg: 'Authentication failed.' });
-                        }
-                        verifiedUser.password = null;
-                        verifiedUser.access_token = null;
-                        res.json({ success: true, user: verifiedUser, token: 'JWT ' + token });
-                    });
-                } else {
-                    res.json({ success: false, msg: 'Authentication failed. Wrong email or password.' });
-                }
-            });
-        }
-    });
+            if (!user) {
+                res.json({ success: false, msg: 'Authentication failed. Invalid user.' });
+            } else {
+                // check if password matches
+                user.comparePassword(req.body.password, function(err, isMatch) {
+                    if (isMatch && !err) {
+                        // if user is found and password is right create a token
+                        var token = jwt.sign(user.toObject(), config.secret);
+                        // return the information including token as JSON
+                        User.findOneAndUpdate({ email: user.email }, { access_token: `JWT ${token}` }, function(err, verifiedUser) {
+                            if (err) {
+                                res.json({ success: false, msg: 'Authentication failed.' });
+                            }
+                            verifiedUser.password = null;
+                            verifiedUser.access_token = null;
+                            res.json({ success: true, user: verifiedUser, token: 'JWT ' + token });
+                        });
+                    } else {
+                        res.json({ success: false, msg: 'Authentication failed. Wrong email or password.' });
+                    }
+                });
+            }
+        });
+    }
 });
 
 
@@ -82,12 +86,11 @@ router.post('/login', function(req, res) {
 router.get('/user', passport.authenticate('jwt', { session: false }), function(req, res) {
     var token = getToken(req.headers);
     if (token) {
-        User.findOne({ access_token: 'JWT ' + token }, function(err, user) {
-            if (err) {
-                return res.status(403).send({ success: false, msg: 'Unauthorized.' });
-            }
+        User.findOne({ access_token: token }, function(err, user) {
+            if (err) return next(err);
+
             if (!user) {
-                return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+                return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
             }
             user.password = null;
             user.access_token = null;
@@ -98,35 +101,52 @@ router.get('/user', passport.authenticate('jwt', { session: false }), function(r
 
 // create new hobby
 router.post('/hobby', passport.authenticate('jwt', { session: false }), function(req, res) {
-    var token = getToken(req.headers);
-    if (token) {
-        var newHobby = new Hobby({
-            name: req.body.name,
-            description: req.body.description,
-            user_email: req.body.email
-        });
-
-        newHobby.save(function(err) {
-            if (err) {
-                return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
-            }
-            res.json({ success: true, msg: 'Successful added new hobby.' });
-        });
+    if (!req.body.name || !req.body.description) {
+        res.json({ name: false, msg: 'name and description reqiured !' });
     } else {
-        return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+        var token = getToken(req.headers);
+        if (token) {
+            User.findOne({ access_token: token }, function(err, user) {
+                if (err) return next(err);
+
+                if (!user) {
+                    return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
+                }
+
+                var newHobby = new Hobby({
+                    name: req.body.name,
+                    description: req.body.description,
+                    user_id: user._id
+                });
+
+                newHobby.save(function(err) {
+                    if (err) {
+                        return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
+                    }
+                    res.json({ success: true, msg: 'Successful added new hobby.' });
+                });
+
+            });
+        } else {
+            return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+        }
+
     }
 });
 
 // get list of user hobbies
-router.get('/hobby', passport.authenticate('jwt', { session: false }), function(req, res) {
+router.get('/hobbies', passport.authenticate('jwt', { session: false }), function(req, res) {
     var token = getToken(req.headers);
-    if (!req.query.email) {
-        res.json({ success: false, msg: err.message || 'Could not get hobbies' });
-    }
     if (token) {
-        Hobby.find({ user_email: req.query.email }, function(err, hobbies) {
+        User.findOne({ access_token: token }, function(err, user) {
             if (err) return next(err);
-            res.json(hobbies);
+            if (!user) {
+                return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+            }
+            Hobby.find({ user_email: user.email }, function(err, hobbies) {
+                if (err) return next(err);
+                res.json(hobbies);
+            });
         });
     } else {
         return res.status(401).send({ success: false, msg: 'Unauthorized.' });
@@ -137,7 +157,7 @@ getToken = function(headers) {
     if (headers && headers.authorization) {
         var parted = headers.authorization.split(' ');
         if (parted.length === 2) {
-            return parted[1];
+            return headers.authorization;
         } else {
             return null;
         }

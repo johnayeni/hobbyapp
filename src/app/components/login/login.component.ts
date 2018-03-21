@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewContainerRef} from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../classes/user';
+
 
 @Component({
   selector: 'app-login',
@@ -19,12 +20,12 @@ export class LoginComponent implements OnInit {
     this.authService.loginUser(this.formData)
       .subscribe(
                 response => this.authService.handleLoginCallback(response),
-                errors => alert('Server Error')
+                errors => alert('server error')
               );
   }
 
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
   }

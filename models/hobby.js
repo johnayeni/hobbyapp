@@ -4,12 +4,13 @@ var Schema = mongoose.Schema;
 var HobbySchema = new Schema({
     name: {
         type: String,
-        maxlength: [20, 'Title must have no more than 20 words'],
+        maxlength: [20, 'Title must have no more than 20 characters'],
+        unique: [true, 'Cannot register a hobby more than once'],
         required: true
     },
     description: {
         type: String,
-        maxlength: [140, 'Description should be no more than 140 words'],
+        maxlength: [140, 'Description should be no more than 140 characters'],
         required: true
     },
     favourite: {

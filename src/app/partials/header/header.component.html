@@ -13,14 +13,14 @@
     <div id="navbarDropdown" [class]="isActive? 'navbar-menu is-active':'navbar-menu'" *ngIf="authService.isLoggedIn()">
         <div class="navbar-end">
             <div class="navbar-item">
-                <a class=" has-text-white " routerLink="/home" routerLinkActive="active">
+                <a class=" has-text-white " routerLink="/home" routerLinkActive="active" (click)="toggleNav()">
                     <span class="icon is-small ">
                       <i class="fas fa-home "></i>
                   </span> Home
                 </a>
             </div>
             <div class="navbar-item ">
-                <a class="has-text-white " routerLink="/profile" routerLinkActive="active">
+                <a class="has-text-white " routerLink="/profile" routerLinkActive="active" (click)="toggleNav()">
                     <span class="icon is-small ">
                       <i class="fas fa-user "></i>
                   </span> Profile

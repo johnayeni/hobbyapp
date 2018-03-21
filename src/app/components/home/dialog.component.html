@@ -1,0 +1,32 @@
+<div>
+    <mat-dialog-content>
+        <h1 class="title">Add new Hobby</h1>
+        <form (ngSubmit)="onSubmit()">
+            <div class="field">
+                <div class="control">
+                    <label class="label">Name</label>
+                    <input class="input" type="text" [(ngModel)]="hobby.name" name="name" placeholder="Name of Hobby">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <label class="label">Decription</label>
+                    <textarea class="textarea" rows="4" [(ngModel)]="hobby.description" name="description" placeholder="Decription of Hobby (max: 140 characters)">
+                    </textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="button is-link" type="submit">
+                  Save
+                </button>
+                </p>
+                <p class="control">
+                    <button class="button" [mat-dialog-close]="true">
+                  Cancel
+                </button>
+                </p>
+            </div>
+        </form>
+    </mat-dialog-content>
+</div>
