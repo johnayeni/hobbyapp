@@ -16,12 +16,16 @@ export class LoginComponent implements OnInit {
 
   errors: string;
 
+  is_loading: Boolean = false;
+
   onSubmit(): void {
+    this.is_loading = true;
     this.authService.loginUser(this.formData)
       .subscribe(
                 response => this.authService.handleLoginCallback(response),
                 errors => alert('server error')
               );
+    this.is_loading = false;
   }
 
 

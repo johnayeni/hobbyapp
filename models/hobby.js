@@ -19,7 +19,7 @@ var HobbySchema = new Schema({
     },
     user_id: {
         type: Schema.Types.ObjectId,
-        required: [true, 'ID of user is required'],
+        required: [true, 'Id of user is required'],
         ref: 'User'
     },
     created: {

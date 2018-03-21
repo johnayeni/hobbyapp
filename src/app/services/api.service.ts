@@ -46,7 +46,12 @@ export class ApiService {
   }
 
   handleAddHobbyCallback(response): void {
-    alert(response.msg);
+    if (response.success === true) {
+      alert(response.msg);
+      window.location.reload();
+    } else {
+      alert(response.msg);
+    }
   }
 
   handleError(error: HttpErrorResponse) {

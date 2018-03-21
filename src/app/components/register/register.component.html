@@ -36,7 +36,7 @@
                     </div>
                     <div class="field is-grouped">
                         <div class="control">
-                            <button class="button is-danger" type="submit">Register</button>
+                            <button [class]="is_loading ? 'button is-danger is-loading' : 'button is-danger'" type="submit">Register</button>
                         </div>
                     </div>
 

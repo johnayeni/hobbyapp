@@ -42,6 +42,9 @@ export class DialogComponent {
 
   hobby =  new Hobby();
 
+  is_loading: Boolean = false;
+
+
   constructor(
     public dialogRef: MatDialogRef<DialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -53,10 +56,13 @@ export class DialogComponent {
   }
 
   onSubmit(): void {
+    this.is_loading = true;
     this.apiService.addHobby(this.hobby)
       .subscribe(response => this.apiService.handleAddHobbyCallback(response),
                 errors => alert('server error')
     );
+    this.is_loading = false;
+
   }
 
 }

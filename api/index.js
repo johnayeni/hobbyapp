@@ -143,7 +143,7 @@ router.get('/hobbies', passport.authenticate('jwt', { session: false }), functio
             if (!user) {
                 return res.status(401).send({ success: false, msg: 'Unauthorized.' });
             }
-            Hobby.find({ user_email: user.email }, function(err, hobbies) {
+            Hobby.find({ user_id: user._id }, function(err, hobbies) {
                 if (err) return next(err);
                 res.json(hobbies);
             });
