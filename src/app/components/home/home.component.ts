@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Hobby } from '../../classes/hobby';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
 
   navigationSubscription;
 
-  constructor(private apiService: ApiService, private authService: AuthService, public dialog: MatDialog) {}
+  constructor(private apiService: ApiService, private authService: AuthService, public dialog: MatDialog, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.getHobbies();
@@ -31,25 +31,30 @@ export class HomeComponent implements OnInit {
   toggleHobbyLike(hobby: Hobby): void {
     if (hobby.favourite === true) {
       this.apiService.unLikeHobby(hobby)
-          .subscribe(response => (this.apiService.handleToggleLikeHobbyCallback(response),
+          .subscribe(response => (this.apiService.handleCallback(response),
                     this.getHobbies()),
-                    errors => alert('Server errors')
+                    errors => this.openSnackBar('server error', 'close')
           );
     } else {
       this.apiService.likeHobby(hobby)
-          .subscribe(response => (this.apiService.handleToggleLikeHobbyCallback(response),
+          .subscribe(response => (this.apiService.handleCallback(response),
                     this.getHobbies()),
-                    errors => alert('Server errors')
+                    errors => this.openSnackBar('server error', 'close')
           );
     }
   }
 
-  removeHobby(name: string): void {
-    this.apiService.removeHobby(name)
-        .subscribe(response => (this.apiService.handleRemoveHobbyCallback(response),
-                  this.getHobbies()),
-                  errors => alert('Server error')
-        );
+  removeHobby(name: string) {
+    const confirm = window.confirm('Remove hobby ?');
+    if (confirm === true) {
+      this.apiService.removeHobby(name)
+      .subscribe(response => (this.apiService.handleCallback(response),
+                this.getHobbies()),
+                errors => this.openSnackBar('server error', 'close')
+      );
+    } else {
+      this.openSnackBar('Operation aborted', 'close');
+    }
   }
 
   openDialog(): void {
@@ -62,6 +67,13 @@ export class HomeComponent implements OnInit {
       this.getHobbies();
     });
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+    });
+  }
+
 }
 
 @Component({
@@ -78,7 +90,8 @@ export class DialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private apiService: ApiService
+    private apiService: ApiService,
+    public snackBar: MatSnackBar
   ) { }
 
   onNoClick(): void {
@@ -88,12 +101,18 @@ export class DialogComponent {
   onSubmit(): void {
     this.is_loading = true;
     this.apiService.addHobby(this.hobby)
-      .subscribe(response => (this.apiService.handleAddHobbyCallback(response),
-                  this.dialogRef.close()),
-                errors => alert('server error')
+      .subscribe(response => (this.apiService.handleCallback(response),
+                              this.dialogRef.close(),
+                              this.is_loading = false),
+                errors => (this.openSnackBar('server error', 'close'), this.is_loading = false)
     );
-    this.is_loading = false;
 
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+    });
   }
 
 }

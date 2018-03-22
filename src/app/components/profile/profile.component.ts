@@ -15,6 +15,10 @@ export class ProfileComponent implements OnInit {
   constructor(private apiService: ApiService, private authService: AuthService) { }
 
   ngOnInit() {
+    this.getUser();
+  }
+
+  getUser(): void {
     this.apiService.getUser()
       .subscribe(user => this.user = user,
                 errors => this.authService.logout()

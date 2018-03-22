@@ -1,7 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import './assets/css/bulma.css';
+body {
+    background-color: #ffffff;
+}
+
 #layoutContent {
     display: flex;
     min-height: 100vh;
@@ -27,4 +31,15 @@
     .hero.is-large .hero-body {
         padding-top: 10rem;
     }
+}
+
+.is-light {
+    background-color: #ffffff !important;
+}
+
+.input {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    background-color: #E6E6E6;
+    padding: 8px;
 }

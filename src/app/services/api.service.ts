@@ -13,13 +13,15 @@ import { AuthService } from './auth.service';
 
 import { environment } from '../../environments/environment';
 
+import { MatSnackBar } from '@angular/material';
+
 const base_url = String(environment.base_url);
 
 
 @Injectable()
 export class ApiService {
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService, public snackBar: MatSnackBar) { }
 
   getUser(): Observable<User> {
     return this.http.get<User>(`${base_url}api/user` , {
@@ -78,32 +80,17 @@ export class ApiService {
                     );
   }
 
-  handleAddHobbyCallback(response): void {
-    if (response.success === true) {
-      alert(response.msg);
-    } else {
-      alert(response.msg);
-    }
-  }
-
-  handleToggleLikeHobbyCallback(response): void {
-    if (response.success === true) {
-      alert(response.msg);
-    } else {
-      alert(response.msg);
-    }
-  }
-
-  handleRemoveHobbyCallback(response): void {
-    if (response.success === true) {
-      alert(response.msg);
-    } else {
-      alert(response.msg);
-    }
+  handleCallback(response): void {
+    this.openSnackBar(response.msg, 'close');
   }
 
   handleError(error: HttpErrorResponse) {
     return Observable.throw(error.message || 'server error');
   }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+    });
+  }
 }

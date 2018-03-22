@@ -1,6 +1,8 @@
 import { Component, OnInit , ViewContainerRef} from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../classes/user';
+import { MatSnackBar } from '@angular/material';
+
 
 
 @Component({
@@ -18,20 +20,24 @@ export class LoginComponent implements OnInit {
 
   is_loading: Boolean = false;
 
+  constructor(private authService: AuthService, public snackBar: MatSnackBar) {}
+
+  ngOnInit() {}
+
   onSubmit(): void {
     this.is_loading = true;
     this.authService.loginUser(this.formData)
       .subscribe(
-                response => this.authService.handleLoginCallback(response),
-                errors => alert('server error')
+                response => (this.authService.handleLoginCallback(response),
+                this.is_loading = false),
+                errors => (this.openSnackBar('server error', 'close'), this.is_loading = false)
               );
-    this.is_loading = false;
   }
 
-
-  constructor(private authService: AuthService) {}
-
-  ngOnInit() {
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+    });
   }
 
 }

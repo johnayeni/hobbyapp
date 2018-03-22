@@ -9,13 +9,15 @@ import 'rxjs/add/observable/throw';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
+import {MatSnackBar} from '@angular/material';
+
 const base_url = String(environment.base_url);
 
 
 @Injectable()
 export class AuthService {
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, public snackBar: MatSnackBar) { }
 
   registerUser(formData: User): Observable<User> {
     return this.http.post<User>(`${base_url}api/register`, formData)
@@ -37,10 +39,12 @@ export class AuthService {
 
   async handleRegisterCallback(response) {
     if (response.success === true) {
-      await alert('Successfully registered, PLease Log in');
+      // await alert('Successfully registered, PLease Log in');
+      await this.openSnackBar('Successfully registered, PLease Log in', 'close');
       this.router.navigate(['/login']);
     } else {
-      alert(response.msg);
+      // alert(response.msg);
+      this.openSnackBar(response.msg, 'close');
     }
   }
   async handleLoginCallback(response) {
@@ -48,7 +52,8 @@ export class AuthService {
       this.setToken(response.token);
       this.router.navigate(['/home']);
     } else {
-      alert(response.msg);
+      // alert(response.msg);
+      this.openSnackBar(response.msg, 'close');
     }
   }
 
@@ -78,6 +83,12 @@ export class AuthService {
   logout(): void {
     this.removeToken();
     this.router.navigate(['/']);
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
 
 }
