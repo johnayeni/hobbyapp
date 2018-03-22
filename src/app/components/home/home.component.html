@@ -1,7 +1,7 @@
 <section style="margin-top: 50px;margin-bottom: 50px;">
     <div class="columns is-centered">
         <div class="container column is-6" style="padding: 20px !important;">
-            <h2 class="title">My Hobbies</h2>
+            <h2 class="title has-text-danger">My Hobbies</h2>
             <br>
             <button class="button is-link is-rounded is-outlined" (click)="openDialog()">
                 <span>Add new Hobby</span>
@@ -22,26 +22,26 @@
                         <div class="content">
                             {{ hobby.description }}
                             <br>
-                            <time datetime="2016-1-1"> {{ hobby.created }}</time>
+                            <time datetime="2016-1-1" class="has-text-link"> Added {{ hobby.created | date:'mediumDate' }}</time>
                         </div>
                     </div>
                     <div class="buttons has-addons is-right">
                         <p class="control">
-                            <button class="button">
+                            <button class="button is-large button-no-border">
                                 <span [class]="hobby.favourite ? 'icon is-small has-text-danger' : 'icon is-small has-text-dark'" (click)="toggleHobbyLike(hobby)">
                                   <i class="fas fa-heart"></i>
                                 </span>
                             </button>
                         </p>
                         <p class="control">
-                            <a class="button" [href]="'https://twitter.com/intent/tweet?text=I just added ' + hobby.name + ' to my hobbies on Hobby square app&url=https://hobbyapp.herokuapp.com'" target="_blank">
+                            <a class="button is-large button-no-border" [href]="'https://twitter.com/intent/tweet?text=I just added ' + hobby.name + ' to my hobbies on Hobby square app&url=https://hobbyapp.herokuapp.com'" target="_blank">
                                 <span class="icon is-small has-text-info">
                                   <i class="fab fa-twitter"></i>
                                 </span>
                             </a>
                         </p>
                         <p class="control">
-                            <button class="button">
+                            <button class="button is-large button-no-border">
                                 <span class="icon is-small" (click)="removeHobby(hobby.name)">
                                   <i class="fas fa-trash-alt"></i>
                                 </span>

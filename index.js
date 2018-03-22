@@ -42,6 +42,9 @@ app.use(function(req, res, next) {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, function() {
+app.listen(port, function(err) {
+    if (err) {
+        console.log(err);
+    }
     console.log('Application now live ...');
 });

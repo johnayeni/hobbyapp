@@ -22,28 +22,45 @@ router.post('/register', function(req, res) {
                 return res.json({ success: false, msg: err.message || 'Error creating user.' });
             }
             if (result.valid == true) {
-                var message = 'Welcome to Hobby square app';
-                var number = formatPhoneNumber(req.body.phone_number);
-                // send client sms
-                sendsms(number, message);
-                var title = "Welcome to Hobbysquare app ";
-                var text = "Thank you for opening your account with us";
-                // send client mail
-                sendmail(req.body.email, title, text);
-                var newUser = new User({
-                    fullname: req.body.fullname,
-                    email: req.body.email,
-                    phone_number: req.body.phone_number,
-                    password: req.body.password
-                });
-                // save the user
-                newUser.save(function(err) {
+              // check if email is in use
+                User.findOne({email: req.body.email} , function(err, user){
+                  if (err) {
+                      return res.json({ success: false, msg: err.message || 'Error creating user.' });
+                  }
+                  if (user) {
+                      return res.json({ success: false, msg: 'Email already exists'});
+                  }
+                  // check if phone number is already in use
+                  User.findOne({phone_number: req.body.phone_number}, function (err, user){
                     if (err) {
                         return res.json({ success: false, msg: err.message || 'Error creating user.' });
                     }
-                    res.json({ success: true, msg: 'Successful created new user.' });
+                    if (user) {
+                        return res.json({ success: false, msg: 'Phone number already exists'});
+                    }
+                    var message = 'Welcome to Hobby square app';
+                    var number = formatPhoneNumber(req.body.phone_number);
+                    // send client sms
+                    sendsms(number, message);
+                    var title = "Welcome to Hobbysquare app ";
+                    var text = "Thank you for opening your account with us";
+                    // send client mail
+                    sendmail(req.body.email, title, text);
+                    var newUser = new User({
+                        fullname: req.body.fullname,
+                        email: req.body.email,
+                        phone_number: req.body.phone_number,
+                        password: req.body.password
+                    });
+                    // save the user
+                    newUser.save(function(err) {
+                        if (err) {
+                            return res.json({ success: false, msg: err.message || 'Error creating user.' });
+                        }
+                        res.json({ success: true, msg: 'Successful created new user.' });
+                    });
+                  });
                 });
-
             } else {
                 res.json({ success: false, msg: 'Invalid Phone Number.' });
             }
@@ -169,7 +186,7 @@ router.put('/fav-hobby', passport.authenticate('jwt', { session: false }), funct
                 if (!user) {
                     return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
                 }
-                Hobby.findOneAndUpdate({ name: req.body.name }, { favourite: true }, function(err, hobby) {
+                Hobby.findOneAndUpdate({  user_id: user._id, name: req.body.name }, { favourite: true }, function(err, hobby) {
                     if (err) return next(err);
 
                     if (!hobby) {
@@ -198,7 +215,7 @@ router.put('/unfav-hobby', passport.authenticate('jwt', { session: false }), fun
                 if (!user) {
                     return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
                 }
-                Hobby.findOneAndUpdate({ name: req.body.name }, { favourite: false }, function(err, hobby) {
+                Hobby.findOneAndUpdate({ user_id: user._id,  name: req.body.name }, { favourite: false }, function(err, hobby) {
                     if (err) return next(err);
 
                     if (!hobby) {
@@ -227,7 +244,7 @@ router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), 
                 if (!user) {
                     return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
                 }
-                Hobby.findOneAndRemove({ name: req.params.name }, function(err, hobby) {
+                Hobby.findOneAndRemove({ user_id: user._id, name: req.params.name }, function(err, hobby) {
                     if (err) return next(err);
 
                     if (!hobby) {
@@ -303,7 +320,7 @@ async function sendsms (number, message) {
         var response = await client.messages.create({
           body: message,
           to: number,
-          from: '	(203) 693-8207'
+          from: process.env.TWILLO_PHONE_NUMBER
       });
 
     } catch (e){
