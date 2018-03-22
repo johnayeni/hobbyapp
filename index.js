@@ -27,7 +27,7 @@ app.options('*', cors());
 app.use(passport.initialize());
 
 
-// Serve only the static files form the dist directory
+// Serve only the static files from the dist directory
 app.use(express.static(__dirname + '/dist'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
