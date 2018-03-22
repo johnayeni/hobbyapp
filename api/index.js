@@ -9,6 +9,7 @@ var User = require("../models/user");
 var Hobby = require("../models/hobby");
 var numverify = require("../config/numverify");
 var client = require("../config/twilo");
+var mailgun = require("../config/mailgun");
 
 // register a user
 router.post('/register', function(req, res) {
@@ -21,28 +22,28 @@ router.post('/register', function(req, res) {
                 return res.json({ success: false, msg: err.message || 'Error creating user.' });
             }
             if (result.valid == true) {
+                var message = 'Welcome to Hobby square app';
+                var number = formatPhoneNumber(req.body.phone_number);
                 // send client sms
-                client.messages.create({
-                        body: 'Welcome to Hobby square app',
-                        to: '+' + req.body.phone_number.replace(/\s\D/g, ""),
-                        from: '	(203) 693-8207'
-                    },
-                    function(message) {
-                        var newUser = new User({
-                            fullname: req.body.fullname,
-                            email: req.body.email,
-                            phone_number: req.body.phone_number,
-                            password: req.body.password
-                        });
-                        // save the user
-                        newUser.save(function(err) {
-                            if (err) {
-                                return res.json({ success: false, msg: err.message || 'Error creating user.' });
-                            }
-                            res.json({ success: true, msg: 'Successful created new user.' });
-                        });
+                sendsms(number, message);
+                var title = "Welcome to Hobbysquare app ";
+                var text = "Thank you for opening your account with us";
+                // send client mail
+                sendmail(req.body.email, title, text);
+                var newUser = new User({
+                    fullname: req.body.fullname,
+                    email: req.body.email,
+                    phone_number: req.body.phone_number,
+                    password: req.body.password
+                });
+                // save the user
+                newUser.save(function(err) {
+                    if (err) {
+                        return res.json({ success: false, msg: err.message || 'Error creating user.' });
+                    }
+                    res.json({ success: true, msg: 'Successful created new user.' });
+                });
 
-                    });
             } else {
                 res.json({ success: false, msg: 'Invalid Phone Number.' });
             }
@@ -119,11 +120,11 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
                     return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
                 }
 
-                Hobby.findOne({ user_id: user._id, name: req.body.name }, function (err, hobby){
+                Hobby.findOne({ user_id: user._id, name: req.body.name }, function(err, hobby) {
                     if (err) {
                         return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
                     }
-                    if (hobby){
+                    if (hobby) {
                         return res.json({ success: false, msg: 'Hobby already exists.' });
                     }
                     var newHobby = new Hobby({
@@ -136,15 +137,16 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
                         if (err) {
                             return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
                         }
-                        client.messages.create({
-                            body: 'You just added ' + req.body.name + ' to your hobbies',
-                            to: '+' + user.phone_number.replace(/\s\D/g, ""),
-                            from: '	(203) 693-8207'
-                        },
-                        function(message) {
+                          var message = 'You just added ' + req.body.name + ' to your hobbies';
+                          var number = formatPhoneNumber(user.phone_number);
+                          // send client sms
+                          sendsms(number, message);
+                          var title = "Hobby app notification";
+                          var text = 'You just added ' + req.body.name + ' to your hobbies';
+                          // send client mail
+                          sendmail(user.email, title, text);
                           res.json({ success: true, msg: 'Successful added new hobby.' });
-                        });
-                    });                    
+                    });
                 });
             });
         } else {
@@ -231,15 +233,15 @@ router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), 
                     if (!hobby) {
                         res.json({ success: false, msg: 'Failed to remove hobby ' + req.params.name });
                     } else {
-                        client.messages.create({
-                            body: 'You just removed ' + req.params.name + ' from your hobbies',
-                            to: '+' + user.phone_number.replace(/\s\D/g, ""),
-                            from: '	(203) 693-8207'
-                        },
-                        function(message) {
-                          res.json({ success: true, msg: 'Successful removed hobby.' });
-                        });
-
+                        var message = 'You just removed ' + req.params.name + ' from your hobbies';
+                        var number = formatPhoneNumber(user.phone_number);
+                        // send client sms
+                        sendsms(number, message);
+                        var title = "Hobby app notification";
+                        var text = 'You just removed ' + req.params.name + ' from your hobbies';
+                        // send client mail
+                        sendmail(user.email, title, text);
+                        res.json({ success: true, msg: 'Successful removed hobby.' });
                     }
                 });
             });
@@ -269,7 +271,7 @@ router.get('/hobbies', passport.authenticate('jwt', { session: false }), functio
     }
 });
 
-getToken = function(headers) {
+function getToken (headers) {
     if (headers && headers.authorization) {
         var parted = headers.authorization.split(' ');
         if (parted.length === 2) {
@@ -281,6 +283,36 @@ getToken = function(headers) {
         true
         return null;
     }
-};
+}
+
+async function sendmail (email, title, text) {
+   try {
+    var response = await mailgun.sendText('noreply@hobbysquareapp.com', [`Recipient 1 <${email}>`],
+        title,
+        text,
+        'noreply@hobbysquareapp.com'
+    );
+   } catch (e){
+     console.log(e);
+   }
+}
+
+
+async function sendsms (number, message) {
+    try {
+        var response = await client.messages.create({
+          body: message,
+          to: number,
+          from: '	(203) 693-8207'
+      });
+
+    } catch (e){
+      console.log(e);
+     }
+}
+
+function formatPhoneNumber (number) {
+  return '+' + number.replace(/\s\D/g, "");
+}
 
 module.exports = router;
