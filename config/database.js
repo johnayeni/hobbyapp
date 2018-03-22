@@ -1,4 +1,4 @@
 module.exports = {
     'secret': 'nodeauthsecret',
-    'database': 'mongodb://localhost:27017/hobbyapp'
+    'database': process.env.MONGO_DB_URL
 };

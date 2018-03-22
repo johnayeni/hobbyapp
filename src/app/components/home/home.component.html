@@ -25,10 +25,22 @@
                             <time datetime="2016-1-1"> {{ hobby.created }}</time>
                         </div>
                     </div>
-                    <footer class="card-footer">
-                        <a href="#" [class]="hobby.favorite ? 'card-footer-item has-text-danger' : 'card-footer-item has-text-dark'"><i class="fa fa-heart"></i></a>
-                        <a href="#" class="card-footer-item">Remove</a>
-                    </footer>
+                    <div class="buttons has-addons is-right">
+                        <p class="control">
+                            <button class="button">
+                                <span [class]="hobby.favourite ? 'icon is-small has-text-danger' : 'icon is-small has-text-dark'" (click)="toggleHobbyLike(hobby)">
+                                  <i class="fas fa-heart"></i>
+                                </span>
+                            </button>
+                        </p>
+                        <p class="control">
+                            <button class="button">
+                                <span class="icon is-small" (click)="removeHobby(hobby.name)">
+                                  <i class="fas fa-trash-alt"></i>
+                                </span>
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

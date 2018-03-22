@@ -4,17 +4,15 @@ const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const passport = require('passport');
 var cors = require('cors');
-const config = require('./config/database');
 require('dotenv').config();
-
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
-}
 
 const app = express();
 
-mongoose.connect(config.database);
+const mongodb = process.env.MONGO_DB_URL;
+
+mongoose.connect(mongodb, { config: { autoIndex: false } })
+    .then(() => console.log('connection successful, we\'re ready to fetch your stuff'))
+    .catch((err) => console.error(err));
 
 const api = require('./api');
 
@@ -41,5 +39,9 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-app.listen(process.env.PORT || 3000);
-console.log(`App live ...`);
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, function() {
+    console.log('Application now live ...');
+});

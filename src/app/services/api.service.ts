@@ -11,13 +11,18 @@ import 'rxjs/add/observable/throw';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
+import { environment } from '../../environments/environment';
+
+const base_url = String(environment.base_url);
+
+
 @Injectable()
 export class ApiService {
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
   getUser(): Observable<User> {
-    return this.http.get<User>('http://localhost:3000/api/user' , {
+    return this.http.get<User>(`${base_url}api/user` , {
                         headers: new HttpHeaders().set('Authorization', this.authService.getToken())
                       })
                       .pipe(
@@ -27,7 +32,7 @@ export class ApiService {
   }
 
   getHobbies(): Observable<Hobby> {
-    return this.http.get<Hobby[]>('http://localhost:3000/api/hobbies' , {
+    return this.http.get<Hobby[]>(`${base_url}api/hobbies` , {
                         headers: new HttpHeaders().set('Authorization', this.authService.getToken())
                       })
                       .pipe(
@@ -37,7 +42,35 @@ export class ApiService {
   }
 
   addHobby(formData: Hobby): Observable<object> {
-    return this.http.post<object>('http://localhost:3000/api/hobby', formData, {
+    return this.http.post<object>(`${base_url}api/hobby`, formData, {
+                      headers: new HttpHeaders().set('Authorization', this.authService.getToken())
+                    })
+                    .pipe(
+                      catchError(this.handleError)
+                    );
+  }
+
+
+  likeHobby(hobby: Hobby): Observable<object> {
+    return this.http.put<object>(`${base_url}api/fav-hobby`, hobby , {
+                      headers: new HttpHeaders().set('Authorization', this.authService.getToken())
+                    })
+                    .pipe(
+                      catchError(this.handleError)
+                    );
+  }
+
+  unLikeHobby(hobby: Hobby): Observable<object> {
+    return this.http.put<object>(`${base_url}api/unfav-hobby`, hobby , {
+                      headers: new HttpHeaders().set('Authorization', this.authService.getToken())
+                    })
+                    .pipe(
+                      catchError(this.handleError)
+                    );
+  }
+
+  removeHobby(name: string): Observable<object> {
+    return this.http.delete(`${base_url}api/hobby/${name}`, {
                       headers: new HttpHeaders().set('Authorization', this.authService.getToken())
                     })
                     .pipe(
@@ -48,7 +81,22 @@ export class ApiService {
   handleAddHobbyCallback(response): void {
     if (response.success === true) {
       alert(response.msg);
-      window.location.reload();
+    } else {
+      alert(response.msg);
+    }
+  }
+
+  handleToggleLikeHobbyCallback(response): void {
+    if (response.success === true) {
+      alert(response.msg);
+    } else {
+      alert(response.msg);
+    }
+  }
+
+  handleRemoveHobbyCallback(response): void {
+    if (response.success === true) {
+      alert(response.msg);
     } else {
       alert(response.msg);
     }

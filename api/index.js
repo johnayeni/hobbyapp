@@ -134,6 +134,94 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
     }
 });
 
+
+// favorite hobby
+router.put('/fav-hobby', passport.authenticate('jwt', { session: false }), function(req, res) {
+    if (!req.body.name) {
+        res.json({ name: false, msg: 'Could like hobby' });
+    } else {
+        var token = getToken(req.headers);
+        if (token) {
+            User.findOne({ access_token: token }, function(err, user) {
+                if (err) return next(err);
+                if (!user) {
+                    return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
+                }
+                Hobby.findOneAndUpdate({ name: req.body.name }, { favourite: true } , function(err, hobby) {
+                    if (err) return next(err);
+
+                    if (!hobby) {
+                        res.json({ success: false, msg: 'Failed to like hobby '});
+                    } else {
+                        res.json({ success: true, msg: 'Hobby liked.' });
+                    }
+                });
+            });
+        } else {
+            return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+        }
+    }
+});
+
+
+// unfavorite hobby
+router.put('/unfav-hobby', passport.authenticate('jwt', { session: false }), function(req, res) {
+    if (!req.body.name) {
+        res.json({ name: false, msg: 'Could unlike hobby' });
+    } else {
+        var token = getToken(req.headers);
+        if (token) {
+            User.findOne({ access_token: token }, function(err, user) {
+                if (err) return next(err);
+                if (!user) {
+                    return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
+                }
+                Hobby.findOneAndUpdate({ name: req.body.name }, { favourite: false } , function(err, hobby) {
+                    if (err) return next(err);
+
+                    if (!hobby) {
+                        res.json({ success: false, msg: 'Failed to unlike hobby '});
+                    } else {
+                        res.json({ success: true, msg: 'Hobby unliked.' });
+                    }
+                });
+            });
+        } else {
+            return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+        }
+    }
+});
+
+
+// delete hobby
+router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), function(req, res) {
+    if (!req.params.name) {
+        res.json({ name: false, msg: 'Could not remove hobby' });
+    } else {
+        var token = getToken(req.headers);
+        if (token) {
+            User.findOne({ access_token: token }, function(err, user) {
+                if (err) return next(err);
+                if (!user) {
+                    return res.status(401).send({ success: false, msg: 'Unauthorized User.' });
+                }
+                Hobby.findOneAndRemove({ name: req.params.name }, function(err, hobby) {
+                    if (err) return next(err);
+
+                    if (!hobby) {
+                        res.json({ success: false, msg: 'Failed to remove hobby ' + req.params.name });
+                    } else {
+                        res.json({ success: true, msg: 'Successful removed hobby.' });
+                    }
+                });
+            });
+        } else {
+            return res.status(401).send({ success: false, msg: 'Unauthorized.' });
+        }
+    }
+});
+
+
 // get list of user hobbies
 router.get('/hobbies', passport.authenticate('jwt', { session: false }), function(req, res) {
     var token = getToken(req.headers);

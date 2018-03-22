@@ -33,7 +33,8 @@ const routes: Routes = [
     component: HomeComponent,
     canActivate: [
       AuthGuard
-    ]
+    ],
+    runGuardsAndResolvers: 'always'
   },
   {
     path: 'profile',
@@ -45,7 +46,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
   exports: [RouterModule],
   providers: [AuthGuard, GuestGuard],
 })

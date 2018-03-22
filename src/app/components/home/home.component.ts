@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Hobby } from '../../classes/hobby';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,12 +13,42 @@ export class HomeComponent implements OnInit {
 
   hobbies = Hobby[1000];
 
-  constructor(private apiService: ApiService, private authService: AuthService, public dialog: MatDialog) { }
+  navigationSubscription;
+
+  constructor(private apiService: ApiService, private authService: AuthService, public dialog: MatDialog) {}
 
   ngOnInit() {
+    this.getHobbies();
+  }
+
+  getHobbies(): void {
     this.apiService.getHobbies()
         .subscribe(hobbies => this.hobbies = hobbies,
                   errors => this.authService.logout()
+        );
+  }
+
+  toggleHobbyLike(hobby: Hobby): void {
+    if (hobby.favourite === true) {
+      this.apiService.unLikeHobby(hobby)
+          .subscribe(response => (this.apiService.handleToggleLikeHobbyCallback(response),
+                    this.getHobbies()),
+                    errors => alert('Server errors')
+          );
+    } else {
+      this.apiService.likeHobby(hobby)
+          .subscribe(response => (this.apiService.handleToggleLikeHobbyCallback(response),
+                    this.getHobbies()),
+                    errors => alert('Server errors')
+          );
+    }
+  }
+
+  removeHobby(name: string): void {
+    this.apiService.removeHobby(name)
+        .subscribe(response => (this.apiService.handleRemoveHobbyCallback(response),
+                  this.getHobbies()),
+                  errors => alert('Server error')
         );
   }
 
@@ -29,7 +59,7 @@ export class HomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      this.getHobbies();
     });
   }
 }
@@ -58,7 +88,8 @@ export class DialogComponent {
   onSubmit(): void {
     this.is_loading = true;
     this.apiService.addHobby(this.hobby)
-      .subscribe(response => this.apiService.handleAddHobbyCallback(response),
+      .subscribe(response => (this.apiService.handleAddHobbyCallback(response),
+                  this.dialogRef.close()),
                 errors => alert('server error')
     );
     this.is_loading = false;

@@ -7,6 +7,9 @@ import { catchError } from 'rxjs/operators';
 import 'rxjs/add/observable/throw';
 
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+
+const base_url = String(environment.base_url);
 
 
 @Injectable()
@@ -15,14 +18,14 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   registerUser(formData: User): Observable<User> {
-    return this.http.post<User>('http://localhost:3000/api/register', formData)
+    return this.http.post<User>(`${base_url}api/register`, formData)
                     .pipe(
                       catchError(this.handleError)
                     );
 }
 
   loginUser(formData: User): Observable<User> {
-    return this.http.post<User>('http://localhost:3000/api/login', formData)
+    return this.http.post<User>(`${base_url}api/login`, formData)
                     .pipe(
                       catchError(this.handleError)
                     );
