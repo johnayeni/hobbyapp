@@ -5,7 +5,6 @@ var HobbySchema = new Schema({
     name: {
         type: String,
         maxlength: [20, 'Title must have no more than 20 characters'],
-        unique: [true, 'Cannot register a hobby more than once'],
         required: true
     },
     description: {
