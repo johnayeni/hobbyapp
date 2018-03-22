@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-const mongodb = process.env.MONGO_DB_URL;
+const mongodb = process.env.MONGODB_URI;
 
 mongoose.connect(mongodb, { config: { autoIndex: false } })
     .then(() => console.log('connection successful, we\'re ready to fetch your stuff'))
