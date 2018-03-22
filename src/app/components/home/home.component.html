@@ -1,6 +1,6 @@
 <section style="margin-top: 50px;margin-bottom: 50px;">
     <div class="columns is-centered">
-        <div class="column is-6">
+        <div class="container column is-6" style="padding: 20px !important;">
             <h2 class="title">My Hobbies</h2>
             <br>
             <button class="button is-link is-rounded is-outlined" (click)="openDialog()">
@@ -10,7 +10,7 @@
                 </span>
             </button>
             <br><br>
-            <p *ngIf="!hobbies || hobbies.length < 1 ">No Hobbies added yet !</p>
+            <p *ngIf="!hobbies || hobbies.length < 1 ">No Hobbies !</p>
             <div *ngIf="hobbies && hobbies.length> 0">
                 <div class="card" *ngFor="let hobby of hobbies">
                     <header class="card-header">
@@ -32,6 +32,13 @@
                                   <i class="fas fa-heart"></i>
                                 </span>
                             </button>
+                        </p>
+                        <p class="control">
+                            <a class="button" [href]="'https://twitter.com/intent/tweet?text=I just added ' + hobby.name + ' to my hobbies on Hobby square app&url=https://hobbyapp.herokuapp.com'" target="_blank">
+                                <span class="icon is-small has-text-info">
+                                  <i class="fab fa-twitter"></i>
+                                </span>
+                            </a>
                         </p>
                         <p class="control">
                             <button class="button">
