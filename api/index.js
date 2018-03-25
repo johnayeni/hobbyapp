@@ -18,23 +18,17 @@ router.post('/register', function(req, res) {
     } else {
         // verify user phone number
         numverify.validate({ number: req.body.phone_number }, function(err, result) {
-            if (err) {
-                return res.json({ success: false, msg: err.message || 'Error creating user.' });
-            }
+            if (err) return next(err);
             if (result.valid == true) {
               // check if email is in use
                 User.findOne({email: req.body.email} , function(err, user){
-                  if (err) {
-                      return res.json({ success: false, msg: err.message || 'Error creating user.' });
-                  }
+                if (err) return next(err);
                   if (user) {
                       return res.json({ success: false, msg: 'Email already exists'});
                   }
                   // check if phone number is already in use
                   User.findOne({phone_number: req.body.phone_number}, function (err, user){
-                    if (err) {
-                        return res.json({ success: false, msg: err.message || 'Error creating user.' });
-                    }
+                  if (err) return next(err);
                     if (user) {
                         return res.json({ success: false, msg: 'Phone number already exists'});
                     }
@@ -77,7 +71,7 @@ router.post('/login', function(req, res) {
         User.findOne({
             email: req.body.email
         }, function(err, user) {
-            if (err) throw err;
+            if (err) return next(err);
 
             if (!user) {
                 res.json({ success: false, msg: 'Authentication failed. Invalid user.' });
@@ -94,7 +88,7 @@ router.post('/login', function(req, res) {
                             }
                             verifiedUser.password = null;
                             verifiedUser.access_token = null;
-                            res.json({ success: true, user: verifiedUser, token: 'JWT ' + token });
+                            res.json({ success: true, token: 'JWT ' + token });
                         });
                     } else {
                         res.json({ success: false, msg: 'Authentication failed. Wrong email or password.' });
@@ -138,9 +132,7 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
                 }
 
                 Hobby.findOne({ user_id: user._id, name: req.body.name }, function(err, hobby) {
-                    if (err) {
-                        return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
-                    }
+                    if (err) return next(err);
                     if (hobby) {
                         return res.json({ success: false, msg: 'Hobby already exists.' });
                     }
@@ -151,19 +143,17 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
                     });
 
                     newHobby.save(function(err) {
-                        if (err) {
-                            return res.json({ success: false, msg: err.message || 'Save Hobby failed.' });
-                        }
-                          var message = 'You just added ' + req.body.name + ' to your hobbies';
-                          var number = formatPhoneNumber(user.phone_number);
-                          // send client sms
-                          sendsms(number, message);
-                          var title = "Hobby app notification";
-                          var text = 'You just added ' + req.body.name + ' to your hobbies';
-                          // send client mail
-                          sendmail(user.email, title, text);
-                          res.json({ success: true, msg: 'Successful added new hobby.' });
-                    });
+                      if (err) return next(err);
+                      var message = 'You just added ' + req.body.name + ' to your hobbies';
+                      var number = formatPhoneNumber(user.phone_number);
+                      // send client sms
+                      sendsms(number, message);
+                      var title = "Hobby app notification";
+                      var text = 'You just added ' + req.body.name + ' to your hobbies';
+                      // send client mail
+                      sendmail(user.email, title, text);
+                      res.json({ success: true, msg: 'Successful added new hobby.' });
+                  });
                 });
             });
         } else {

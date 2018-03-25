@@ -19,15 +19,15 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router, public snackBar: MatSnackBar) { }
 
-  registerUser(formData: User): Observable<User> {
-    return this.http.post<User>(`${base_url}api/register`, formData)
+  registerUser(formData: User): Observable<object> {
+    return this.http.post<object>(`${base_url}api/register`, formData)
                     .pipe(
                       catchError(this.handleError)
                     );
 }
 
-  loginUser(formData: User): Observable<User> {
-    return this.http.post<User>(`${base_url}api/login`, formData)
+  loginUser(formData: User): Observable<object> {
+    return this.http.post<object>(`${base_url}api/login`, formData)
                     .pipe(
                       catchError(this.handleError)
                     );
@@ -39,11 +39,9 @@ export class AuthService {
 
   async handleRegisterCallback(response) {
     if (response.success === true) {
-      // await alert('Successfully registered, PLease Log in');
-      await this.openSnackBar('Successfully registered, PLease Log in', 'close');
+      this.openSnackBar('Successfully registered, PLease Log in', 'close');
       this.router.navigate(['/login']);
     } else {
-      // alert(response.msg);
       this.openSnackBar(response.msg, 'close');
     }
   }
@@ -52,7 +50,6 @@ export class AuthService {
       this.setToken(response.token);
       this.router.navigate(['/home']);
     } else {
-      // alert(response.msg);
       this.openSnackBar(response.msg, 'close');
     }
   }

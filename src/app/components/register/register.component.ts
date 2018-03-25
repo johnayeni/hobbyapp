@@ -13,10 +13,6 @@ export class RegisterComponent implements OnInit {
 
   formData = new User();
 
-  response: object;
-
-  errors: string;
-
   is_loading: Boolean = false;
 
   constructor(private authService: AuthService, public snackBar: MatSnackBar) { }
