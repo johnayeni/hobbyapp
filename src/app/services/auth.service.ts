@@ -37,7 +37,7 @@ export class AuthService {
     return Observable.throw(error.message || 'server error');
   }
 
-  async handleRegisterCallback(response) {
+  handleRegisterCallback(response) {
     if (response.success === true) {
       this.openSnackBar('Successfully registered, PLease Log in', 'close');
       this.router.navigate(['/login']);
@@ -45,7 +45,7 @@ export class AuthService {
       this.openSnackBar(response.msg, 'close');
     }
   }
-  async handleLoginCallback(response) {
+  handleLoginCallback(response) {
     if (response.success === true) {
       this.setToken(response.token);
       this.router.navigate(['/home']);
