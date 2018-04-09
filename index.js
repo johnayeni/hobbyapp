@@ -1,9 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const passport = require('passport');
-var cors = require('cors');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
@@ -16,7 +16,7 @@ mongoose.connect(mongodb, { config: { autoIndex: false } })
 
 const api = require('./api');
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -33,18 +33,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', api);
 
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+app.use((req, res, next) => {
+    // let err = new Error('Not Found');
+    // err.status = 404;
+    // next(err);
+    res.redirect('/#/404');
 });
 
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, function(err) {
+app.listen(port, (err) => {
     if (err) {
         console.log(err);
     }
-    console.log('Application now live ...');
+    console.log(`Application now live at port ${port}...`);
 });

@@ -1,15 +1,15 @@
-var mongoose = require('mongoose');
-var passport = require('passport');
-var config = require('../config/database');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const config = require('../config/database');
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const User = require("../models/user");
+const Hobby = require("../models/hobby");
+const numverify = require("../config/numverify");
+const client = require("../config/twilo");
+const mailgun = require("../config/mailgun");
 require('../config/passport')(passport);
-var express = require('express');
-var jwt = require('jsonwebtoken');
-var router = express.Router();
-var User = require("../models/user");
-var Hobby = require("../models/hobby");
-var numverify = require("../config/numverify");
-var client = require("../config/twilo");
-var mailgun = require("../config/mailgun");
 
 // register a user
 router.post('/register', function(req, res) {
@@ -32,15 +32,15 @@ router.post('/register', function(req, res) {
                     if (user) {
                         return res.json({ success: false, msg: 'Phone number already exists'});
                     }
-                    var message = 'Welcome to Hobby square app';
-                    var number = formatPhoneNumber(req.body.phone_number);
+                    let message = 'Welcome to Hobby square app';
+                    let number = formatPhoneNumber(req.body.phone_number);
                     // send client sms
                     sendsms(number, message);
-                    var title = "Welcome to Hobbysquare app ";
-                    var text = "Thank you for opening your account with us";
+                    let title = "Welcome to Hobbysquare app ";
+                    let text = "Thank you for opening your account with us";
                     // send client mail
                     sendmail(req.body.email, title, text);
-                    var newUser = new User({
+                    let newUser = new User({
                         fullname: req.body.fullname,
                         email: req.body.email,
                         phone_number: req.body.phone_number,
@@ -80,15 +80,13 @@ router.post('/login', function(req, res) {
                 user.comparePassword(req.body.password, function(err, isMatch) {
                     if (isMatch && !err) {
                         // if user is found and password is right create a token
-                        var token = jwt.sign(user.toObject(), config.secret);
+                        let token = jwt.sign(user.toObject(), config.secret);
                         // return the information including token as JSON
                         User.findOneAndUpdate({ email: user.email }, { access_token: `JWT ${token}` }, function(err, verifiedUser) {
-                            if (err) {
+                            if (err || !verifiedUser) {
                                 res.json({ success: false, msg: 'Authentication failed.' });
                             }
-                            verifiedUser.password = null;
-                            verifiedUser.access_token = null;
-                            res.json({ success: true, token: 'JWT ' + token });
+                            res.json({ success: true, token: `JWT ${token }` });
                         });
                     } else {
                         res.json({ success: false, msg: 'Authentication failed. Wrong email or password.' });
@@ -102,7 +100,7 @@ router.post('/login', function(req, res) {
 
 // get user details
 router.get('/user', passport.authenticate('jwt', { session: false }), function(req, res) {
-    var token = getToken(req.headers);
+    let token = getToken(req.headers);
     if (token) {
         User.findOne({ access_token: token }, function(err, user) {
             if (err) return next(err);
@@ -122,7 +120,7 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
     if (!req.body.name || !req.body.description) {
         res.json({ name: false, msg: 'Hobby name and description reqiured !' });
     } else {
-        var token = getToken(req.headers);
+        let token = getToken(req.headers);
         if (token) {
             User.findOne({ access_token: token }, function(err, user) {
                 if (err) return next(err);
@@ -136,7 +134,7 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
                     if (hobby) {
                         return res.json({ success: false, msg: 'Hobby already exists.' });
                     }
-                    var newHobby = new Hobby({
+                    let newHobby = new Hobby({
                         name: req.body.name,
                         description: req.body.description,
                         user_id: user._id
@@ -144,12 +142,12 @@ router.post('/hobby', passport.authenticate('jwt', { session: false }), function
 
                     newHobby.save(function(err) {
                       if (err) return next(err);
-                      var message = 'You just added ' + req.body.name + ' to your hobbies';
-                      var number = formatPhoneNumber(user.phone_number);
+                      let message = `You just added ${req.body.name} to your hobbies`;
+                      let number = formatPhoneNumber(user.phone_number);
                       // send client sms
                       sendsms(number, message);
-                      var title = "Hobby app notification";
-                      var text = 'You just added ' + req.body.name + ' to your hobbies';
+                      let title = "Hobby app notification";
+                      let text = `You just added ${req.body.name} to your hobbies`;
                       // send client mail
                       sendmail(user.email, title, text);
                       res.json({ success: true, msg: 'Successful added new hobby.' });
@@ -169,7 +167,7 @@ router.put('/fav-hobby', passport.authenticate('jwt', { session: false }), funct
     if (!req.body.name) {
         res.json({ name: false, msg: 'Could like hobby' });
     } else {
-        var token = getToken(req.headers);
+        let token = getToken(req.headers);
         if (token) {
             User.findOne({ access_token: token }, function(err, user) {
                 if (err) return next(err);
@@ -198,7 +196,7 @@ router.put('/unfav-hobby', passport.authenticate('jwt', { session: false }), fun
     if (!req.body.name) {
         res.json({ name: false, msg: 'Could unlike hobby' });
     } else {
-        var token = getToken(req.headers);
+        let token = getToken(req.headers);
         if (token) {
             User.findOne({ access_token: token }, function(err, user) {
                 if (err) return next(err);
@@ -227,7 +225,7 @@ router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), 
     if (!req.params.name) {
         res.json({ name: false, msg: 'Could not remove hobby' });
     } else {
-        var token = getToken(req.headers);
+        let token = getToken(req.headers);
         if (token) {
             User.findOne({ access_token: token }, function(err, user) {
                 if (err) return next(err);
@@ -238,14 +236,14 @@ router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), 
                     if (err) return next(err);
 
                     if (!hobby) {
-                        res.json({ success: false, msg: 'Failed to remove hobby ' + req.params.name });
+                        res.json({ success: false, msg: `Failed to remove hobby ${req.params.name}` });
                     } else {
-                        var message = 'You just removed ' + req.params.name + ' from your hobbies';
-                        var number = formatPhoneNumber(user.phone_number);
+                        let message = `You just removed ${req.params.name} from your hobbies`;
+                        let number = formatPhoneNumber(user.phone_number);
                         // send client sms
                         sendsms(number, message);
-                        var title = "Hobby app notification";
-                        var text = 'You just removed ' + req.params.name + ' from your hobbies';
+                        let title = "Hobby app notification";
+                        let text = `You just removed ${req.params.name} from your hobbies`;
                         // send client mail
                         sendmail(user.email, title, text);
                         res.json({ success: true, msg: 'Successful removed hobby.' });
@@ -261,7 +259,7 @@ router.delete('/hobby/:name', passport.authenticate('jwt', { session: false }), 
 
 // get list of user hobbies
 router.get('/hobbies', passport.authenticate('jwt', { session: false }), function(req, res) {
-    var token = getToken(req.headers);
+    let token = getToken(req.headers);
     if (token) {
         User.findOne({ access_token: token }, function(err, user) {
             if (err) return next(err);
@@ -278,9 +276,9 @@ router.get('/hobbies', passport.authenticate('jwt', { session: false }), functio
     }
 });
 
-function getToken (headers) {
+const getToken = (headers) => {
     if (headers && headers.authorization) {
-        var parted = headers.authorization.split(' ');
+        let parted = headers.authorization.split(' ');
         if (parted.length === 2) {
             return headers.authorization;
         } else {
@@ -292,7 +290,7 @@ function getToken (headers) {
     }
 }
 
-async function sendmail (email, title, text) {
+const sendmail = async (email, title, text) => {
    try {
     var response = await mailgun.sendText('noreply@hobbysquareapp.com', [`Recipient 1 <${email}>`],
         title,
@@ -305,7 +303,7 @@ async function sendmail (email, title, text) {
 }
 
 
-async function sendsms (number, message) {
+const sendsms = async(number, message) => {
     try {
         var response = await client.messages.create({
           body: message,
@@ -318,8 +316,8 @@ async function sendsms (number, message) {
      }
 }
 
-function formatPhoneNumber (number) {
-  return '+' + number.replace(/\s\D/g, "");
+const formatPhoneNumber = (number) => {
+  return `+${number.replace(/\s\D/g, "")}`;
 }
 
 module.exports = router;

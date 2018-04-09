@@ -4,6 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AuthGuard } from './guards/auth.guard';
 import { GuestGuard } from './guards/guest.guard';
 
@@ -42,7 +43,14 @@ const routes: Routes = [
     canActivate: [
       AuthGuard
     ]
-  }
+  },
+  {
+    component: NotFoundComponent,
+     path: '404'
+  },
+  { path: '**',
+    redirectTo: '404'
+  },
 ];
 
 @NgModule({

@@ -21,6 +21,7 @@ import { FooterComponent } from './partials/footer/footer.component';
 // services import
 import { ApiService } from './services/api.service';
 import { AuthService } from './services/auth.service';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { AuthService } from './services/auth.service';
     ProfileComponent,
     HeaderComponent,
     FooterComponent,
+    NotFoundComponent,
   ],
   entryComponents: [DialogComponent],
   imports: [
